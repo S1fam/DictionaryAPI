@@ -14,9 +14,12 @@ def home():
 
 @app.route("/api/v1/<word>")
 def api(word):
-    definition = df.loc[df["word"] == word]['definition'].squeeze()
-    result_dictionary = {'word': word, 'definition': definition}
-    return result_dictionary
+    word_definition = word.upper()  # setting a value for case of word outside dictionary
+    for index, item in enumerate(df["word"]):
+        if word == item:
+            word_definition = df["definition"][index]
+    return {"definition": word_definition,
+            "word": word}
 
 
 app.run(debug=True)
