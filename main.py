@@ -3,6 +3,9 @@ import pandas as pd
 
 app = Flask(__name__)
 
+df = pd.read_csv("dictionary.csv")  # reading the csv file here, will be executed once
+# in function, it would be executed as many times as user wants (we save resources)
+
 
 @app.route("/")
 def home():
@@ -10,16 +13,10 @@ def home():
 
 
 @app.route("/api/v1/<word>")
-def definition(word):
-
-    df = pd.read_csv("dictionary.csv")  # reading the csv file
-    word_definition = word.upper()  # setting a value for case of word outside dictionary
-
-    for index, item in enumerate(df["word"]):
-        if word == item:
-            word_definition = df["definition"][index]
-    return {"definition": word_definition,
-            "word": word}
+def api(word):
+    definition = df.loc[df["word"] == word]['definition'].squeeze()
+    result_dictionary = {'word': word, 'definition': definition}
+    return result_dictionary
 
 
 app.run(debug=True)
